@@ -417,7 +417,6 @@ function pushbutton_mp4_frame25_calculate_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 filename=handles.filename_frame25;
-codec='h264';
 
 rates = [1000 900 800 700 600 500 400 300 200 100];
 video_rate = rates(get(handles.popupmenu_mpeg2_frame25, 'value'));
@@ -611,7 +610,6 @@ function pushbutton_mp4_frame25_play_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 % videofile=handles.FileName_frame25;
 filename=handles.filename_frame25;
-codec='h264';
 
 rates = [1000 900 800 700 600 500 400 300 200 100];
 % rates = [300 250 200 150 100 50];
@@ -627,6 +625,7 @@ rr=num2str(rr_rate);
 disp(rr);
 
 % codec='mpeg2video';
+codec='h264';
 file_in=['video/',filename,'.mp4'];
 filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
 file_out_path=['video_',codec,'_out/'];
@@ -890,7 +889,8 @@ else
 end
 disp(ss_t);
 
-rates = [1000 300 250 200 150 100 50];
+rates = [1000 900 800 700 600 500 400 300 200 100];
+% rates = [1000 300 250 200 150 100 50];
 video_rate = rates(get(handles.popupmenu_mpeg2_frame15, 'value'));
 disp(video_rate);
 vr=num2str(video_rate);
@@ -955,31 +955,30 @@ function pushbutton_frame15_generateAll_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 filename=handles.filename_frame15;
 
-rates = [300 250 200 150 100 50];
+rates = [1000 900 800 700 600 500 400 300 200 100];
 video_rate = rates(get(handles.popupmenu_mpeg2_frame15, 'value'));
 disp(video_rate);
 vr=num2str(video_rate);
 disp(vr);
 
-r_rates = [20 15 10 5 1];
+r_rates = [15 10 5 1];
 rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame15_rr, 'value'));
 disp(rr_rate);
 rr=num2str(rr_rate);
 disp(rr);
 
-% h264
 codec='h264';
 filename_in=[filename,'_bv',vr,'k_rr',rr,'_mpeg2video'];
-video_in=['video_mpeg2video_out/',filename_in,'.mp4'];
-video_out_path=['video_',codec,'_out/'];
-mkdir(video_out_path);
+file_in=['video_mpeg2video_out/',filename_in,'.mp4'];
+file_out_path=['video_',codec,'_out/'];
+mkdir(file_out_path);
 filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
-video_out1=[video_out_path,filename2,codec,'.mp4'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
 % str_out1= ['ffmpeg -i ',video_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -s 640*360 -ss ',ss_t,' -t 2 -r 25 -ac 1 -ar 16k ',video_out1];
-str_out1= ['ffmpeg -i ',video_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -r ',rr,' -ac 1 -ar 16k ',video_out1];
+str_out1= ['ffmpeg -i ',file_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -r ',rr,' -ac 1 -ar 16k ',file_out1];
 system(str_out1);  
 
-v = VideoReader(video_out1);
+v = VideoReader(file_out1);
 disp(v.FrameRate);
 disp(v);
 currAxes = handles.axes_h264_frame15_video;
@@ -991,21 +990,21 @@ while hasFrame(v)
 end
 % guidata(hObject, handles);
 
-% mjpeg
 codec='mjpeg';
-video_in=['video/',filename,'.mp4'];
+filename_in=[filename,'_bv',vr,'k_rr',rr,'_mpeg2video'];
+file_in=['video_mpeg2video_out/',filename_in,'.mp4'];
+file_out_path=['video_',codec,'_out/'];
+mkdir(file_out_path);
 filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
-video_out_path=['video_',codec,'_out/'];
-mkdir(video_out_path);
-video_out1=[video_out_path,filename2,codec,'.mp4'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
 % str_out1= ['ffmpeg -i ',video_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -s 640*360 -ss ',ss_t,' -t 2 -r 25 -ac 1 -ar 16k ',video_out1];
-str_out1= ['ffmpeg -i ',video_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -r ',rr,' -ac 1 -ar 16k ',video_out1];
-system(str_out1); 
-video_out2=[video_out_path,filename2,codec,'_mpeg2.mp4'];
-str_out2= ['ffmpeg -i ',video_out1,' -vcodec mpeg2video ',video_out2];
+str_out1= ['ffmpeg -i ',file_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -r ',rr,' -ac 1 -ar 16k ',file_out1];
+system(str_out1);  
+file_out2=[file_out_path,filename2,codec,'_mpeg2.mp4'];
+str_out2= ['ffmpeg -i ',file_out1,' -vcodec mpeg2video ',file_out2];
 system(str_out2); 
 
-v = VideoReader(video_out2);
+v = VideoReader(file_out2);
 disp(v.FrameRate);
 disp(v);
 currAxes = handles.axes_mjpeg_frame15_video;
@@ -1017,18 +1016,18 @@ while hasFrame(v)
 end
 % guidata(hObject, handles);
 
-% hevc
 codec='hevc';
-video_in=['video/',filename,'.mp4'];
+filename_in=[filename,'_bv',vr,'k_rr',rr,'_mpeg2video'];
+file_in=['video_mpeg2video_out/',filename_in,'.mp4'];
+file_out_path=['video_',codec,'_out/'];
+mkdir(file_out_path);
 filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
-video_out_path=['video_',codec,'_out/'];
-mkdir(video_out_path);
-video_out1=[video_out_path,filename2,codec,'.mp4'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
 % str_out1= ['ffmpeg -i ',video_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -s 640*360 -ss ',ss_t,' -t 2 -r 25 -ac 1 -ar 16k ',video_out1];
-str_out1= ['ffmpeg -i ',video_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -r ',rr,' -ac 1 -ar 16k ',video_out1];
-system(str_out1);   
+str_out1= ['ffmpeg -i ',file_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -r ',rr,' -ac 1 -ar 16k ',file_out1];
+system(str_out1);    
 
-v = VideoReader(video_out1);
+v = VideoReader(file_out1);
 disp(v.FrameRate);
 disp(v);
 currAxes = handles.axes_hevc_frame15_video;
@@ -1040,18 +1039,18 @@ while hasFrame(v)
 end
 % guidata(hObject, handles);
 
-% vp9
 codec='vp9';
-video_in=['video/',filename,'.mp4'];
+filename_in=[filename,'_bv',vr,'k_rr',rr,'_mpeg2video'];
+file_in=['video_mpeg2video_out/',filename_in,'.mp4'];
+file_out_path=['video_',codec,'_out/'];
+mkdir(file_out_path);
 filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
-video_out_path=['video_',codec,'_out/'];
-mkdir(video_out_path);
-video_out1=[video_out_path,filename2,codec,'.mp4'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
 % str_out1= ['ffmpeg -i ',video_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -s 640*360 -ss ',ss_t,' -t 2 -r 25 -ac 1 -ar 16k ',video_out1];
-str_out1= ['ffmpeg -i ',video_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -r ',rr,' -ac 1 -ar 16k ',video_out1];
-system(str_out1);   
+str_out1= ['ffmpeg -i ',file_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -r ',rr,' -ac 1 -ar 16k ',file_out1];
+system(str_out1);    
 
-v = VideoReader(video_out1);
+v = VideoReader(file_out1);
 disp(v.FrameRate);
 disp(v);
 currAxes = handles.axes_vp9_frame15_video;
@@ -1071,8 +1070,8 @@ function pushbutton_mpeg2_frame15_play_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 filename=handles.filename_frame15;
 
-% rates = [1000 900 800 700 600 500 400 300 200 100];
-rates = [1000 300 250 200 150 100 50];
+rates = [1000 900 800 700 600 500 400 300 200 100];
+% rates = [1000 300 250 200 150 100 50];
 video_rate = rates(get(handles.popupmenu_mpeg2_frame15, 'value'));
 disp(video_rate);
 vr=num2str(video_rate);
@@ -1147,17 +1146,42 @@ function pushbutton_mp4_frame15_calculate_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_mp4_frame15_calculate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-video_in=handles.filename_frame15_h264_in;
-video_out1=handles.filename_frame15_h264_out1;
-video_out2=handles.filename_frame15_h264_out2;
-disp(video_in);
-disp(video_out2);
+filename=handles.filename_frame15;
+
+rates = [1000 900 800 700 600 500 400 300 200 100];
+video_rate = rates(get(handles.popupmenu_mpeg2_frame15, 'value'));
+disp(video_rate);
+vr=num2str(video_rate);
+disp(vr);
+
+r_rates = [15 10 5 1];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame15_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
+codec='h264';
+filename_in=[filename,'_bv','1000','k_rr',rr,'_mpeg2video'];
+% filename_in=[filename,'_bv',vr,'k_rr',rr,'_mpeg2video'];
+file_in=['video_mpeg2video_out/',filename_in,'.mp4'];
+file_out_path=['video_',codec,'_out/'];
+% mkdir(file_out_path);
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
+disp(file_in);
+disp(file_out1);
+
+[fid,errmsg]=fopen(file_out1);
+disp(errmsg);
+fseek(fid,0,'eof');
+fs = ftell(fid); 
+disp(fs);
 % formats = VideoReader.getFileFormats();
 % disp(formats);
     
-v_out = VideoReader(video_out2);
+v_out = VideoReader(file_out1);
 disp(v_out);
-v_in = VideoReader(video_in);
+v_in = VideoReader(file_in);
 disp(v_in);
 data_in = read(v_in); % Get both frames
 data_out= read(v_out);
@@ -1213,6 +1237,28 @@ ssim_mean=mean(ssim_(1,:));
 disp(mse_mean);
 disp(psnr_mean);
 disp(ssim_mean);
+
+% 存入文件
+% codec,fs,vr,mse,psnr,ssim
+% h264,
+outfile=handles.filename_frame15_outfile;
+newCell_title={'filename','codec',...
+    'filesiez','vr','rr','mse','psnr','ssim'};
+
+newCell_zhi={filename,codec,...
+            fs,vr,rr,mse,psnr,ssim};
+disp(newCell_zhi);
+newTable = cell2table(newCell_zhi);
+
+newTable.Properties.VariableNames=newCell_title;
+nasdaq=readtable(outfile);
+nasdaq.Properties.VariableNames=newCell_title;
+
+newNasdaq =[nasdaq;newTable];  
+writetable(newNasdaq,outfile);
+% 写入完成。
+disp('数据写入完成。');
+
 set(handles.edit_h264_frame15_mse,'string',mse_mean);
 set(handles.edit_h264_frame15_psnr,'string',psnr_mean);
 set(handles.edit_h264_frame15_ssim,'string',ssim_mean);
@@ -1291,11 +1337,28 @@ function pushbutton_mp4_frame15_play_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 filename=handles.filename_frame15;
-file_in=[filename,'.mp4'];
-file_out1=[filename,'_h264.mp4'];
-file_out2=[filename,'_h264_mpeg2.mp4'];
+
+rates = [1000 900 800 700 600 500 400 300 200 100];
+% rates = [1000 300 250 200 150 100 50];
+video_rate = rates(get(handles.popupmenu_mpeg2_frame15, 'value'));
+disp(video_rate);
+vr=num2str(video_rate);
+disp(vr);
+
+r_rates = [15 10 5 1];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame15_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
+% codec='mpeg2video';
+codec='h264';
+file_in=['video/',filename,'.mp4'];
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out_path=['video_',codec,'_out/'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
 str_cmd=['ffplay ',file_out1];
-system(str_cmd);  
+system(str_cmd);   
 
 
 % --- Executes on button press in pushbutton7.
@@ -1753,17 +1816,44 @@ function pushbutton_mjpeg_frame15_calculate_Callback(hObject, eventdata, handles
 % hObject    handle to pushbutton_mjpeg_frame15_calculate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-video_in=handles.filename_frame15_mjpeg_in;
-video_out1=handles.filename_frame15_mjpeg_out1;
-video_out2=handles.filename_frame15_mjpeg_out2;
-disp(video_in);
-disp(video_out2);
+filename=handles.filename_frame15;
+
+rates = [1000 900 800 700 600 500 400 300 200 100];
+video_rate = rates(get(handles.popupmenu_mpeg2_frame15, 'value'));
+disp(video_rate);
+vr=num2str(video_rate);
+disp(vr);
+
+r_rates = [15 10 5 1];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame15_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
+codec='mjpeg';
+filename_in=[filename,'_bv','1000','k_rr',rr,'_mpeg2video'];
+% filename_in=[filename,'_bv',vr,'k_rr',rr,'_mpeg2video'];
+file_in=['video_mpeg2video_out/',filename_in,'.mp4'];
+file_out_path=['video_',codec,'_out/'];
+% mkdir(file_out_path);
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
+disp(file_in);
+disp(file_out1);
+file_out2=[file_out_path,filename2,codec,'_mpeg2.mp4'];
+disp(file_out2);
+
+[fid,errmsg]=fopen(file_out1);
+disp(errmsg);
+fseek(fid,0,'eof');
+fs = ftell(fid); 
+disp(fs);
 % formats = VideoReader.getFileFormats();
 % disp(formats);
     
-v_out = VideoReader(video_out2);
+v_out = VideoReader(file_out2);
 disp(v_out);
-v_in = VideoReader(video_in);
+v_in = VideoReader(file_in);
 disp(v_in);
 data_in = read(v_in); % Get both frames
 data_out= read(v_out);
@@ -1819,6 +1909,28 @@ ssim_mean=mean(ssim_(1,:));
 disp(mse_mean);
 disp(psnr_mean);
 disp(ssim_mean);
+
+% 存入文件
+% codec,fs,vr,mse,psnr,ssim
+% h264,
+outfile=handles.filename_frame15_outfile;
+newCell_title={'filename','codec',...
+    'filesiez','vr','rr','mse','psnr','ssim'};
+
+newCell_zhi={filename,codec,...
+            fs,vr,rr,mse,psnr,ssim};
+disp(newCell_zhi);
+newTable = cell2table(newCell_zhi);
+
+newTable.Properties.VariableNames=newCell_title;
+nasdaq=readtable(outfile);
+nasdaq.Properties.VariableNames=newCell_title;
+
+newNasdaq =[nasdaq;newTable];  
+writetable(newNasdaq,outfile);
+% 写入完成。
+disp('数据写入完成。');
+
 set(handles.edit_mjpeg_frame15_mse,'string',mse_mean);
 set(handles.edit_mjpeg_frame15_psnr,'string',psnr_mean);
 set(handles.edit_mjpeg_frame15_ssim,'string',ssim_mean);
@@ -1896,11 +2008,28 @@ function pushbutton_mjpeg_frame15_play_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 filename=handles.filename_frame15;
-file_in=[filename,'.mp4'];
-file_out1=[filename,'_mjpeg.mp4'];
-file_out2=[filename,'_mjpeg_mpeg2.mp4'];
+
+rates = [1000 900 800 700 600 500 400 300 200 100];
+% rates = [1000 300 250 200 150 100 50];
+video_rate = rates(get(handles.popupmenu_mpeg2_frame15, 'value'));
+disp(video_rate);
+vr=num2str(video_rate);
+disp(vr);
+
+r_rates = [15 10 5 1];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame15_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
+% codec='mpeg2video';
+codec='mjpeg';
+file_in=['video/',filename,'.mp4'];
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out_path=['video_',codec,'_out/'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
 str_cmd=['ffplay ',file_out1];
-system(str_cmd);  
+system(str_cmd);   
 
 
 % --- Executes on button press in pushbutton_mjpeg_frame25_generate.
@@ -1981,7 +2110,6 @@ function pushbutton_mjpeg_frame25_calculate_Callback(hObject, eventdata, handles
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 filename=handles.filename_frame25;
-codec='mjpeg';
 
 rates = [1000 900 800 700 600 500 400 300 200 100];
 video_rate = rates(get(handles.popupmenu_mpeg2_frame25, 'value'));
@@ -1989,27 +2117,37 @@ disp(video_rate);
 % video_rate=num2str(handles.video_rate_frame25);
 vr=num2str(video_rate);
 disp(vr);
-% video_rate=handles.video_rate_frame25;
-filename2=[filename,'_bv',vr,'k'];
-disp(video_rate);
-video_in=[filename,'_mpeg2_bv1000k.mp4'];
-video_out_path=['video_',codec,'_out/'];
-video_out1=[video_out_path,filename2,'_mjpeg.mp4'];
-video_out2=[video_out_path,filename2,'_mjpeg_mpeg2.mp4'];
-disp(video_in);
-disp(video_out1);
-disp(video_out2);
 
-fid=fopen(video_out1);
+r_rates = [25 20];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame25_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
+codec='mjpeg';
+filename_in=[filename,'_bv','1000','k_rr',rr,'_mpeg2video'];
+% filename_in=[filename,'_bv',vr,'k_rr',rr,'_mpeg2video'];
+file_in=['video_mpeg2video_out/',filename_in,'.mp4'];
+file_out_path=['video_',codec,'_out/'];
+% mkdir(file_out_path);
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
+file_out2=[file_out_path,filename2,codec,'_mpeg2.mp4'];
+disp(file_in);
+disp(file_out1);
+disp(file_out2);
+
+[fid,errmsg]=fopen(file_out1);
+disp(errmsg);
 fseek(fid,0,'eof');
 fs = ftell(fid); 
 disp(fs);
 % formats = VideoReader.getFileFormats();
 % disp(formats);
-    
-v_out = VideoReader(video_out2);
+  
+v_out = VideoReader(file_out2);
 disp(v_out);
-v_in = VideoReader(video_in);
+v_in = VideoReader(file_in);
 disp(v_in);
 data_in = read(v_in); % Get both frames
 data_out= read(v_out);
@@ -2071,10 +2209,10 @@ disp(ssim_mean);
 % mjpeg,
 outfile=handles.filename_frame25_outfile;
 newCell_title={'filename','codec',...
-    'filesiez','video_rate','mse','psnr','ssim'};
+    'filesiez','vr','rr','mse','psnr','ssim'};
 
 newCell_zhi={filename,codec,...
-            fs,vr,mse,psnr,ssim};
+            fs,vr,rr,mse,psnr,ssim};
 disp(newCell_zhi);
 newTable = cell2table(newCell_zhi);
 
@@ -2164,14 +2302,26 @@ function pushbutton_mjpeg_frame25_play_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 filename=handles.filename_frame25;
-codec='mjpeg';
 
-vr=handles.filename_frame25_vr;
-filename2=[filename,'_bv',vr,'k','_'];
-file_in=[filename,'.mp4'];
-video_out_path=['video_',codec,'_out/'];
-file_out1=[video_out_path,filename2,codec,'.mp4'];
-file_out2=[filename,'_h264_mpeg2.mp4'];
+rates = [1000 900 800 700 600 500 400 300 200 100];
+% rates = [300 250 200 150 100 50];
+video_rate = rates(get(handles.popupmenu_mpeg2_frame25, 'value'));
+disp(video_rate);
+vr=num2str(video_rate);
+disp(vr);
+
+r_rates = [25 20];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame25_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
+% codec='mpeg2video';
+codec='mjpeg';
+file_in=['video/',filename,'.mp4'];
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out_path=['video_',codec,'_out/'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
 str_cmd=['ffplay ',file_out1];
 system(str_cmd); 
 
@@ -2399,17 +2549,44 @@ function pushbutton_hevc_frame15_calculate_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_hevc_frame15_calculate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-video_in=handles.filename_frame15_hevc_in;
-video_out1=handles.filename_frame15_hevc_out1;
-video_out2=handles.filename_frame15_hevc_out2;
-disp(video_in);
-disp(video_out2);
+filename=handles.filename_frame15;
+
+rates = [1000 900 800 700 600 500 400 300 200 100];
+video_rate = rates(get(handles.popupmenu_mpeg2_frame15, 'value'));
+disp(video_rate);
+vr=num2str(video_rate);
+disp(vr);
+
+r_rates = [15 10 5 1];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame15_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
+codec='hevc';
+filename_in=[filename,'_bv','1000','k_rr',rr,'_mpeg2video'];
+% filename_in=[filename,'_bv',vr,'k_rr',rr,'_mpeg2video'];
+file_in=['video_mpeg2video_out/',filename_in,'.mp4'];
+file_out_path=['video_',codec,'_out/'];
+% mkdir(file_out_path);
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
+disp(file_in);
+disp(file_out1);
+% file_out2=[file_out_path,filename2,codec,'_mpeg2.mp4'];
+% disp(file_out2);
+
+[fid,errmsg]=fopen(file_out1);
+disp(errmsg);
+fseek(fid,0,'eof');
+fs = ftell(fid); 
+disp(fs);
 % formats = VideoReader.getFileFormats();
 % disp(formats);
     
-v_out = VideoReader(video_out2);
+v_out = VideoReader(file_out1);
 disp(v_out);
-v_in = VideoReader(video_in);
+v_in = VideoReader(file_in);
 disp(v_in);
 data_in = read(v_in); % Get both frames
 data_out= read(v_out);
@@ -2465,6 +2642,28 @@ ssim_mean=mean(ssim_(1,:));
 disp(mse_mean);
 disp(psnr_mean);
 disp(ssim_mean);
+
+% 存入文件
+% codec,fs,vr,mse,psnr,ssim
+% h264,
+outfile=handles.filename_frame15_outfile;
+newCell_title={'filename','codec',...
+    'filesiez','vr','rr','mse','psnr','ssim'};
+
+newCell_zhi={filename,codec,...
+            fs,vr,rr,mse,psnr,ssim};
+disp(newCell_zhi);
+newTable = cell2table(newCell_zhi);
+
+newTable.Properties.VariableNames=newCell_title;
+nasdaq=readtable(outfile);
+nasdaq.Properties.VariableNames=newCell_title;
+
+newNasdaq =[nasdaq;newTable];  
+writetable(newNasdaq,outfile);
+% 写入完成。
+disp('数据写入完成。');
+
 set(handles.edit_hevc_frame15_mse,'string',mse_mean);
 set(handles.edit_hevc_frame15_psnr,'string',psnr_mean);
 set(handles.edit_hevc_frame15_ssim,'string',ssim_mean);
@@ -2542,11 +2741,28 @@ function pushbutton_hevc_frame15_play_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 filename=handles.filename_frame15;
-file_in=[filename,'.mp4'];
-file_out1=[filename,'_hevc.mp4'];
-file_out2=[filename,'_hevc_mpeg2.mp4'];
+
+rates = [1000 900 800 700 600 500 400 300 200 100];
+% rates = [1000 300 250 200 150 100 50];
+video_rate = rates(get(handles.popupmenu_mpeg2_frame15, 'value'));
+disp(video_rate);
+vr=num2str(video_rate);
+disp(vr);
+
+r_rates = [15 10 5 1];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame15_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
+% codec='mpeg2video';
+codec='hevc';
+file_in=['video/',filename,'.mp4'];
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out_path=['video_',codec,'_out/'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
 str_cmd=['ffplay ',file_out1];
-system(str_cmd);  
+system(str_cmd);   
 
 
 % --- Executes on button press in pushbutton_hevc_frame25_generate.
@@ -2559,9 +2775,15 @@ filename=handles.filename_frame25;
 rates = [1000 900 800 700 600 500 400 300 200 100];
 video_rate = rates(get(handles.popupmenu_mpeg2_frame25, 'value'));
 disp(video_rate);
-% video_rate=num2str(handles.video_rate_frame25);
 vr=num2str(video_rate);
 disp(vr);
+
+r_rates = [25 20];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame25_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
 num=get(handles.popupmenu_mpeg2_frame25_ss, 'value');
 disp(num);
 if num==1
@@ -2579,14 +2801,21 @@ else
 end
 disp(ss_t);
 
-video_in=[filename,'.mp4'];
-video_out1=[filename,'_bv',vr,'k_hevc.mp4'];
 codec='hevc';
-% video_out2=[filename,'_bv',vr,'k_mpeg2.mp4'];
-str_out1= ['ffmpeg -i ',video_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -s 640*360 -ss ',ss_t,' -t 2 -r 25 -ac 1 -ar 16k ',video_out1];
-system(str_out1);  
+filename_in=[filename,'_bv',vr,'k_rr',rr,'_mpeg2video'];
+file_in=['video_mpeg2video_out/',filename_in,'.mp4'];
+file_out_path=['video_',codec,'_out/'];
+mkdir(file_out_path);
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
+% str_out1= ['ffmpeg -i ',video_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -s 640*360 -ss ',ss_t,' -t 2 -r 25 -ac 1 -ar 16k ',video_out1];
+str_out1= ['ffmpeg -i ',file_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -r ',rr,' -ac 1 -ar 16k ',file_out1];
+system(str_out1);
+% file_out2=[file_out_path,filename2,codec,'_mpeg2.mp4'];
+% str_out2= ['ffmpeg -i ',file_out1,' -vcodec mpeg2video ',file_out2];
+% system(str_out2);  
 
-v = VideoReader(video_out1);
+v = VideoReader(file_out1);
 disp(v.FrameRate);
 disp(v);
 currAxes = handles.axes_hevc_frame25_video;
@@ -2599,6 +2828,7 @@ end
 
 handles.filename_frame25_codec=codec;
 handles.filename_frame25_vr=vr;
+handles.filename_frame25_rr=rr;
 guidata(hObject, handles);
 
 
@@ -2608,7 +2838,6 @@ function pushbutton_hevc_frame25_calculate_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 filename=handles.filename_frame25;
-codec='hevc';
 
 rates = [1000 900 800 700 600 500 400 300 200 100];
 video_rate = rates(get(handles.popupmenu_mpeg2_frame25, 'value'));
@@ -2616,25 +2845,36 @@ disp(video_rate);
 % video_rate=num2str(handles.video_rate_frame25);
 vr=num2str(video_rate);
 disp(vr);
-% video_rate=handles.video_rate_frame25;
-filename2=[filename,'_bv',vr,'k'];
-disp(video_rate);
-video_in=[filename,'_mpeg2_bv1000k.mp4'];
-video_out_path=['video_',codec,'_out/'];
-video_out1=[video_out_path,filename2,'_hevc.mp4'];
-disp(video_in);
-disp(video_out1);
 
-fid=fopen(video_out1);
+r_rates = [25 20];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame25_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
+codec='hevc';
+filename_in=[filename,'_bv','1000','k_rr',rr,'_mpeg2video'];
+% filename_in=[filename,'_bv',vr,'k_rr',rr,'_mpeg2video'];
+file_in=['video_mpeg2video_out/',filename_in,'.mp4'];
+file_out_path=['video_',codec,'_out/'];
+% mkdir(file_out_path);
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
+disp(file_in);
+disp(file_out1);
+% file_out2=[file_out_path,filename2,codec,'_mpeg2.mp4'];
+% disp(file_out2);
+
+fid=fopen(file_out1);
 fseek(fid,0,'eof');
 fs = ftell(fid); 
 disp(fs);
 % formats = VideoReader.getFileFormats();
 % disp(formats);
     
-v_out = VideoReader(video_out1);
+v_out = VideoReader(file_out1);
 disp(v_out);
-v_in = VideoReader(video_in);
+v_in = VideoReader(file_in);
 disp(v_in);
 data_in = read(v_in); % Get both frames
 data_out= read(v_out);
@@ -2696,10 +2936,10 @@ disp(ssim_mean);
 % hevc,
 outfile=handles.filename_frame25_outfile;
 newCell_title={'filename','codec',...
-    'filesiez','video_rate','mse','psnr','ssim'};
+    'filesiez','vr','rr','mse','psnr','ssim'};
 
 newCell_zhi={filename,codec,...
-            fs,vr,mse,psnr,ssim};
+            fs,vr,rr,mse,psnr,ssim};
 disp(newCell_zhi);
 newTable = cell2table(newCell_zhi);
 
@@ -2789,14 +3029,26 @@ function pushbutton_hevc_frame25_play_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 filename=handles.filename_frame25;
-codec='hevc';
 
-vr=handles.filename_frame25_vr;
-filename2=[filename,'_bv',vr,'k','_'];
-file_in=[filename,'.mp4'];
-video_out_path=['video_',codec,'_out/'];
-file_out1=[video_out_path,filename2,codec,'.mp4'];
-file_out2=[filename,'_h264_mpeg2.mp4'];
+rates = [1000 900 800 700 600 500 400 300 200 100];
+% rates = [300 250 200 150 100 50];
+video_rate = rates(get(handles.popupmenu_mpeg2_frame25, 'value'));
+disp(video_rate);
+vr=num2str(video_rate);
+disp(vr);
+
+r_rates = [25 20];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame25_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
+% codec='mpeg2video';
+codec='hevc';
+file_in=['video/',filename,'.mp4'];
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out_path=['video_',codec,'_out/'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
 str_cmd=['ffplay ',file_out1];
 system(str_cmd); 
 
@@ -3023,17 +3275,44 @@ function pushbutton_webm_frame15_calculate_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_webm_frame15_calculate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-video_in=handles.filename_frame15_vp9_in;
-video_out1=handles.filename_frame15_vp9_out1;
-video_out2=handles.filename_frame15_vp9_out2;
-disp(video_in);
-disp(video_out2);
+filename=handles.filename_frame15;
+
+rates = [1000 900 800 700 600 500 400 300 200 100];
+video_rate = rates(get(handles.popupmenu_mpeg2_frame15, 'value'));
+disp(video_rate);
+vr=num2str(video_rate);
+disp(vr);
+
+r_rates = [15 10 5 1];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame15_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
+codec='vp9';
+filename_in=[filename,'_bv','1000','k_rr',rr,'_mpeg2video'];
+% filename_in=[filename,'_bv',vr,'k_rr',rr,'_mpeg2video'];
+file_in=['video_mpeg2video_out/',filename_in,'.mp4'];
+file_out_path=['video_',codec,'_out/'];
+% mkdir(file_out_path);
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
+disp(file_in);
+disp(file_out1);
+% file_out2=[file_out_path,filename2,codec,'_mpeg2.mp4'];
+% disp(file_out2);
+
+[fid,errmsg]=fopen(file_out1);
+disp(errmsg);
+fseek(fid,0,'eof');
+fs = ftell(fid); 
+disp(fs);
 % formats = VideoReader.getFileFormats();
 % disp(formats);
     
-v_out = VideoReader(video_out2);
+v_out = VideoReader(file_out1);
 disp(v_out);
-v_in = VideoReader(video_in);
+v_in = VideoReader(file_in);
 disp(v_in);
 data_in = read(v_in); % Get both frames
 data_out= read(v_out);
@@ -3089,6 +3368,28 @@ ssim_mean=mean(ssim_(1,:));
 disp(mse_mean);
 disp(psnr_mean);
 disp(ssim_mean);
+
+% 存入文件
+% codec,fs,vr,mse,psnr,ssim
+% h264,
+outfile=handles.filename_frame15_outfile;
+newCell_title={'filename','codec',...
+    'filesiez','vr','rr','mse','psnr','ssim'};
+
+newCell_zhi={filename,codec,...
+            fs,vr,rr,mse,psnr,ssim};
+disp(newCell_zhi);
+newTable = cell2table(newCell_zhi);
+
+newTable.Properties.VariableNames=newCell_title;
+nasdaq=readtable(outfile);
+nasdaq.Properties.VariableNames=newCell_title;
+
+newNasdaq =[nasdaq;newTable];  
+writetable(newNasdaq,outfile);
+% 写入完成。
+disp('数据写入完成。');
+
 set(handles.edit_vp9_frame15_mse,'string',mse_mean);
 set(handles.edit_vp9_frame15_psnr,'string',psnr_mean);
 set(handles.edit_vp9_frame15_ssim,'string',ssim_mean);
@@ -3166,11 +3467,28 @@ function pushbutton_webm_frame15_play_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 filename=handles.filename_frame15;
-file_in=[filename,'.mp4'];
-file_out1=[filename,'_vp9.webm'];
-file_out2=[filename,'_vp9_mpeg2.mp4'];
+
+rates = [1000 900 800 700 600 500 400 300 200 100];
+% rates = [1000 300 250 200 150 100 50];
+video_rate = rates(get(handles.popupmenu_mpeg2_frame15, 'value'));
+disp(video_rate);
+vr=num2str(video_rate);
+disp(vr);
+
+r_rates = [15 10 5 1];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame15_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
+% codec='mpeg2video';
+codec='vp9';
+file_in=['video/',filename,'.mp4'];
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out_path=['video_',codec,'_out/'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
 str_cmd=['ffplay ',file_out1];
-system(str_cmd);  
+system(str_cmd);   
 
 
 % --- Executes on button press in pushbutton_webm_frame25_generate.
@@ -3186,6 +3504,13 @@ disp(video_rate);
 % video_rate=num2str(handles.video_rate_frame25);
 vr=num2str(video_rate);
 disp(vr);
+
+r_rates = [25 20];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame25_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
 num=get(handles.popupmenu_mpeg2_frame25_ss, 'value');
 disp(num);
 if num==1
@@ -3203,17 +3528,21 @@ else
 end
 disp(ss_t);
 
-video_in=[filename,'.mp4'];
-video_out1=[filename,'_bv',vr,'k_vp9.webm'];
 codec='vp9';
-% video_out2=[filename,'_bv',vr,'k_mpeg2.mp4'];
-str_out1= ['ffmpeg -i ',video_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -s 640*360 -ss ',ss_t,' -t 2 -r 25 -ac 1 -ar 16k ',video_out1];
-system(str_out1);   
-video_out2=[filename,'_bv',vr,'k_vp9_mpeg2.mp4'];
-str_out2= ['ffmpeg -i ',video_out1,' -vcodec mpeg2video -r 25 ',video_out2];
+filename_in=[filename,'_bv',vr,'k_rr',rr,'_mpeg2video'];
+file_in=['video_mpeg2video_out/',filename_in,'.mp4'];
+file_out_path=['video_',codec,'_out/'];
+mkdir(file_out_path);
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
+% str_out1= ['ffmpeg -i ',video_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -s 640*360 -ss ',ss_t,' -t 2 -r 25 -ac 1 -ar 16k ',video_out1];
+str_out1= ['ffmpeg -i ',file_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -r ',rr,' -ac 1 -ar 16k ',file_out1];
+system(str_out1);
+file_out2=[file_out_path,filename2,codec,'_mpeg2.mp4'];
+str_out2= ['ffmpeg -i ',file_out1,' -vcodec mpeg2video ',file_out2];
 system(str_out2);  
 
-v = VideoReader(video_out1);
+v = VideoReader(file_out1);
 disp(v.FrameRate);
 disp(v);
 currAxes = handles.axes_vp9_frame25_video;
@@ -3226,6 +3555,7 @@ end
 
 handles.filename_frame25_codec=codec;
 handles.filename_frame25_vr=vr;
+handles.filename_frame25_rr=rr;
 guidata(hObject, handles);
 
 
@@ -3235,7 +3565,6 @@ function pushbutton_webm_frame25_calculate_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 filename=handles.filename_frame25;
-codec='vp9';
 
 rates = [1000 900 800 700 600 500 400 300 200 100];
 video_rate = rates(get(handles.popupmenu_mpeg2_frame25, 'value'));
@@ -3243,27 +3572,36 @@ disp(video_rate);
 % video_rate=num2str(handles.video_rate_frame25);
 vr=num2str(video_rate);
 disp(vr);
-% video_rate=handles.video_rate_frame25;
-filename2=[filename,'_bv',vr,'k'];
-disp(video_rate);
-video_in=[filename,'_mpeg2_bv1000k.mp4'];
-video_out_path=['video_',codec,'_out/'];
-video_out1=[video_out_path,filename2,'_vp9.webm'];
-disp(video_in);
-disp(video_out1);
-video_out2=[video_out_path,filename2,'_vp9_mpeg2.mp4'];
-disp(video_out2);
 
-fid=fopen(video_out1);
+r_rates = [25 20];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame25_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
+codec='vp9';
+filename_in=[filename,'_bv','1000','k_rr',rr,'_mpeg2video'];
+% filename_in=[filename,'_bv',vr,'k_rr',rr,'_mpeg2video'];
+file_in=['video_mpeg2video_out/',filename_in,'.mp4'];
+file_out_path=['video_',codec,'_out/'];
+% mkdir(file_out_path);
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
+disp(file_in);
+disp(file_out1);
+% file_out2=[file_out_path,filename2,codec,'_mpeg2.mp4'];
+% disp(file_out2);
+
+fid=fopen(file_out1);
 fseek(fid,0,'eof');
 fs = ftell(fid); 
 disp(fs);
 % formats = VideoReader.getFileFormats();
 % disp(formats);
     
-v_out = VideoReader(video_out2);
+v_out = VideoReader(file_out1);
 disp(v_out);
-v_in = VideoReader(video_in);
+v_in = VideoReader(file_in);
 disp(v_in);
 data_in = read(v_in); % Get both frames
 data_out= read(v_out);
@@ -3325,10 +3663,10 @@ disp(ssim_mean);
 % vp9,
 outfile=handles.filename_frame25_outfile;
 newCell_title={'filename','codec',...
-    'filesiez','video_rate','mse','psnr','ssim'};
+    'filesiez','vr','rr','mse','psnr','ssim'};
 
 newCell_zhi={filename,codec,...
-            fs,vr,mse,psnr,ssim};
+            fs,vr,rr,mse,psnr,ssim};
 disp(newCell_zhi);
 newTable = cell2table(newCell_zhi);
 
@@ -3419,14 +3757,26 @@ function pushbutton_webm_frame25_play_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 filename=handles.filename_frame25;
-codec='vp9';
 
-vr=handles.filename_frame25_vr;
-filename2=[filename,'_bv',vr,'k','_'];
-file_in=[filename,'.mp4'];
-video_out_path=['video_',codec,'_out/'];
-file_out1=[video_out_path,filename2,codec,'.webm'];
-file_out2=[filename,'_h264_mpeg2.mp4'];
+rates = [1000 900 800 700 600 500 400 300 200 100];
+% rates = [300 250 200 150 100 50];
+video_rate = rates(get(handles.popupmenu_mpeg2_frame25, 'value'));
+disp(video_rate);
+vr=num2str(video_rate);
+disp(vr);
+
+r_rates = [25 20];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame25_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
+% codec='mpeg2video';
+codec='vp9';
+file_in=['video/',filename,'.mp4'];
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out_path=['video_',codec,'_out/'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
 str_cmd=['ffplay ',file_out1];
 system(str_cmd); 
 
@@ -3659,3 +4009,71 @@ function popupmenu_mpeg2_frame25_rr_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in pushbutton_h264_frame25_generate.
+function pushbutton_h264_frame25_generate_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_h264_frame25_generate (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+filename=handles.filename_frame25;
+
+rates = [1000 900 800 700 600 500 400 300 200 100];
+video_rate = rates(get(handles.popupmenu_mpeg2_frame25, 'value'));
+disp(video_rate);
+% video_rate=num2str(handles.video_rate_frame25);
+vr=num2str(video_rate);
+disp(vr);
+
+r_rates = [25 20];
+rr_rate = r_rates(get(handles.popupmenu_mpeg2_frame25_rr, 'value'));
+disp(rr_rate);
+rr=num2str(rr_rate);
+disp(rr);
+
+num=get(handles.popupmenu_mpeg2_frame25_ss, 'value');
+disp(num);
+if num==1
+    ss_t='00:00:55';
+elseif num==2
+    ss_t='00:01:22';
+elseif num==3
+    ss_t='00:00:17';
+elseif num==4
+    ss_t='00:01:30';
+elseif num==5
+    ss_t='00:00:38';
+else
+    ss_t='00:00:17';
+end
+disp(ss_t);
+
+codec='h264';
+filename_in=[filename,'_bv',vr,'k_rr',rr,'_mpeg2video'];
+file_in=['video_mpeg2video_out/',filename_in,'.mp4'];
+file_out_path=['video_',codec,'_out/'];
+mkdir(file_out_path);
+filename2=[filename,'_bv',vr,'k_rr',rr,'_'];
+file_out1=[file_out_path,filename2,codec,'.mp4'];
+% str_out1= ['ffmpeg -i ',video_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -s 640*360 -ss ',ss_t,' -t 2 -r 25 -ac 1 -ar 16k ',video_out1];
+str_out1= ['ffmpeg -i ',file_in,' -vcodec ',codec,' -b:v ',vr,'k -minrate ',vr,'k -maxrate ',vr,'k -bufsize ',vr,'k -r ',rr,' -ac 1 -ar 16k ',file_out1];
+system(str_out1);
+% file_out2=[file_out_path,filename2,codec,'_mpeg2.mp4'];
+% str_out2= ['ffmpeg -i ',file_out1,' -vcodec mpeg2video ',file_out2];
+% system(str_out2);  
+
+v = VideoReader(file_out1);
+disp(v.FrameRate);
+disp(v);
+currAxes = handles.axes_h264_frame25_video;
+while hasFrame(v)
+    vidFrame = readFrame(v);
+    image(vidFrame, 'Parent', currAxes);
+    currAxes.Visible = 'off';
+    pause(1/v.FrameRate);
+end
+
+handles.filename_frame25_codec=codec;
+handles.filename_frame25_vr=vr;
+handles.filename_frame25_rr=rr;
+guidata(hObject, handles);
